@@ -1,4 +1,4 @@
-package distribution;
+package org.kit.tecs;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 

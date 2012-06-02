@@ -1,4 +1,4 @@
-package distribution;
+package org.kit.tecs.data;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

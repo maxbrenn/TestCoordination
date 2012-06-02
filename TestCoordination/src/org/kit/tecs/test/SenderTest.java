@@ -1,4 +1,4 @@
-package test;
+package org.kit.tecs.test;
 
 public class SenderTest {
 

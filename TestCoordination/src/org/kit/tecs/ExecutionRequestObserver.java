@@ -1,4 +1,4 @@
-package distribution;
+package org.kit.tecs;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -52,7 +52,7 @@ public class ExecutionRequestObserver implements Watcher {
 		
 		String remotePropsString = conHandl.readNodeData(
 				coProps.getProperty("coordination.nodeidentity.folderpath") + "/"
-						+ "141.52.218.13", null);
+						+ getLocalhostAddress().getHostAddress(), null);
 
 		Properties props = parseStringProperties(remotePropsString);
 

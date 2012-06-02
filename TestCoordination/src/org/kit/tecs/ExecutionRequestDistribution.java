@@ -1,4 +1,4 @@
-package distribution;
+package org.kit.tecs;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -6,6 +6,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.Random;
+
+import org.kit.tecs.data.Node;
+import org.kit.tecs.data.NodeList;
 
 public class ExecutionRequestDistribution {
 

@@ -1,6 +1,6 @@
-package test;
+package org.kit.tecs.test;
 
-import distribution.ExecutionRequestObserver;
+import org.kit.tecs.ExecutionRequestObserver;
 
 public class ExecutionRequestObserverTest {
 

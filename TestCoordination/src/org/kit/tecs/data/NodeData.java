@@ -1,4 +1,4 @@
-package distribution;
+package org.kit.tecs.data;
 
 public class NodeData {
 
