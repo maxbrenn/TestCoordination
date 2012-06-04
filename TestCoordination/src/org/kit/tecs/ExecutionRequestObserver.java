@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
@@ -28,18 +29,20 @@ public class ExecutionRequestObserver implements Watcher {
 
 		try {
 			conHandl = new ConnectionHandler();
-			
-			
+
 			conHandl.connect(coProps
 					.getProperty("coordination.zookeeper.hosts"));
 
 			nodeProps = retreiveRemoteProperties();
-			
-			watchPath = nodeProps.getProperty("distribution.folderpath.cluster") + nodeProps.getProperty("distribution.folderpath.nodes") + "/" + nodeProps.getProperty("node.name") + nodeProps.getProperty("distribution.folderpath.execreq"); 
-			
 
+			watchPath = nodeProps
+					.getProperty("distribution.folderpath.cluster")
+					+ nodeProps.getProperty("distribution.folderpath.nodes")
+					+ "/"
+					+ nodeProps.getProperty("node.name")
+					+ nodeProps.getProperty("distribution.folderpath.execreq");
 
-		
+			observerExecutionRequests();
 
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
@@ -49,10 +52,17 @@ public class ExecutionRequestObserver implements Watcher {
 
 	private Properties retreiveRemoteProperties() {
 
-		
-		String remotePropsString = conHandl.readNodeData(
-				coProps.getProperty("coordination.nodeidentity.folderpath") + "/"
-						+ getLocalhostAddress().getHostAddress(), null);
+		String pathString = "";
+		try {
+			pathString = coProps
+					.getProperty("coordination.nodeidentity.folderpath")
+					+ "/"
+					+ InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+
+		String remotePropsString = conHandl.readNodeData(pathString, null);
 
 		Properties props = parseStringProperties(remotePropsString);
 
@@ -60,25 +70,23 @@ public class ExecutionRequestObserver implements Watcher {
 	}
 
 	private Properties parseStringProperties(String _remotePropsString) {
-		
+
 		Properties props = new Properties();
-		
+
 		String[] subString = _remotePropsString.split("\\;");
-		
-		for(int i = 0 ; i < subString.length ; i++) {
-			
-			if(!subString[i].equalsIgnoreCase("")) {
-			
+
+		for (int i = 0; i < subString.length; i++) {
+
+			if (!subString[i].equalsIgnoreCase("")) {
 
 				String[] subSubString = subString[i].split("\\=");
-				
+
 				props.setProperty(subSubString[0], subSubString[1]);
-			
-				
+
 			}
-				
+
 		}
-		
+
 		return props;
 	}
 
@@ -119,18 +127,20 @@ public class ExecutionRequestObserver implements Watcher {
 
 	}
 
-	public void displayExecutionRequests() {
+	public void observerExecutionRequests() {
 
-
-		
-		System.out.println(watchPath);
 		List<String> nodes = conHandl.getNodeChildren(watchPath, this);
 
-		for (String node : nodes) {
+		if (!nodes.isEmpty()) {
+			for (String node : nodes) {
+				System.out.println("Execution Request: " + node);
+				
+				
+				System.out.println(conHandl.readNodeData(watchPath + "/" + node, null));
+				
+				conHandl.deleteNode(watchPath + "/" + node);
+			}
 
-			System.out.println(node);
-
-			conHandl.deleteNode(watchPath + "/" + node);
 		}
 
 	}
@@ -138,8 +148,9 @@ public class ExecutionRequestObserver implements Watcher {
 	@Override
 	public void process(WatchedEvent event) {
 		if (event.getType() == EventType.NodeChildrenChanged) {
-			System.out.println("process");
-			displayExecutionRequests();
+			
+			observerExecutionRequests();
+			
 		}
 	}
 
@@ -159,7 +170,13 @@ public class ExecutionRequestObserver implements Watcher {
 	public static void main(String[] args) {
 
 		ExecutionRequestObserver ero = new ExecutionRequestObserver();
-		ero.displayExecutionRequests();
+		ero.observerExecutionRequests();
+
+		try {
+			Thread.sleep(Long.MAX_VALUE);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

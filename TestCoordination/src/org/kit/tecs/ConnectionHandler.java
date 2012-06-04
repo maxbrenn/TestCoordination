@@ -2,15 +2,17 @@ package org.kit.tecs;
 
 import java.nio.charset.Charset;
 import java.util.List;
-
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.data.Stat;
 
+
 public class ConnectionHandler extends Connector {
 
+	
+		
 	private static final Charset CHARSET = Charset.forName("UTF-8");
 
 	public void writeNodeData(String _path, String _value) {

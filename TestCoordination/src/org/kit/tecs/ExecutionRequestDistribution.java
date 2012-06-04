@@ -18,6 +18,7 @@ public class ExecutionRequestDistribution {
 	private ConnectionHandler conHandl;
 
 	public ExecutionRequestDistribution(String _ycsbPropsFilePath) {
+		
 
 		coProps = parseProperties("conf/coordination.conf");
 
